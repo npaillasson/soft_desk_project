@@ -13,7 +13,7 @@ class Projects(models.Model):
 class Contributors(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     project_id = models.ForeignKey(to=Projects, on_delete=models.CASCADE)
-    permission = models.Choices([1,2,3])
+    permission = models.BooleanField()
     body = models.CharField(max_length=8192, blank=True)
     role = models.CharField(max_length=120)
 
@@ -25,8 +25,8 @@ class Issues(models.Model):
     tag = models.CharField(max_length=120)
     status = models.CharField(max_length=120)
     priority = models.CharField(max_length=120)
-    author_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    assignee_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='auther_user')
+    assignee_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='assignee_user')
     created_time = models.DateTimeField(auto_now_add=True)
 
 

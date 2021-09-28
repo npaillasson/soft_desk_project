@@ -1,38 +1,37 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 from django.db import models
 
 
-class Ticket(models.Model):
-    title = models.CharField(max_length=128)
-    description = models.TextField(max_length=2048, blank=True)
+class Projects(models.Model):
+
+    author_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=240)
+    description = models.CharField(max_length=1000)
+    type = models.CharField(max_length=120)
+
+
+class Contributors(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(null=True, blank=True, upload_to='images/')
-    time_created = models.DateTimeField(auto_now_add=True)
-
-
-class Review(models.Model):
-    ticket = models.ForeignKey(to=Ticket, on_delete=models.CASCADE)
-    rating = models.PositiveSmallIntegerField(
-        # validates that rating must be between 0 and 5
-        validators=[MinValueValidator(0), MaxValueValidator(5)])
-    headline = models.CharField(max_length=128)
+    project_id = models.ForeignKey(to=Projects, on_delete=models.CASCADE)
+    permission = models.Choices([1,2,3])
     body = models.CharField(max_length=8192, blank=True)
-    user = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    time_created = models.DateTimeField(auto_now_add=True)
+    role = models.CharField(max_length=120)
 
 
-class UserFollows(models.Model):
-    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='following')
-    followed_user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                      related_name='following_by')
+class Issues(models.Model):
+    project_id = models.ForeignKey(to=Projects, on_delete=models.CASCADE)
+    title = models.CharField(max_length=240)
+    description = models.CharField(max_length=1000)
+    tag = models.CharField(max_length=120)
+    status = models.CharField(max_length=120)
+    priority = models.CharField(max_length=120)
+    author_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    assignee_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_time = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        message = '{} suit {}'.format(self.user, self.followed_user)
-        return message
 
-    class Meta:
-        # ensures we don't get multiple UserFollows instances
-        # for unique user-user_followed pairs
-        unique_together = ('user', 'followed_user', )
+class Comments(models.Model):
+    issue_id = models.ForeignKey(to=Issues, on_delete=models.CASCADE)
+    author_user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    description = models.CharField(max_length=1000)
+    created_time = models.DateTimeField(auto_now_add=True)

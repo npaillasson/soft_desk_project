@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import project_list
+from .views import ProjectList
 
 urlpatterns = [
-    path('projects/', project_list, name='token_obtain_pair'),
+    path('projects/', ProjectList.as_view(), name='token_obtain_pair'),
 ]

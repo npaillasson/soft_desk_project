@@ -1,27 +1,39 @@
 from rest_framework import serializers
-from .models import Projects, Contributors, Issues, Comments
+from django.contrib.auth.models import User
+from rest_framework.relations import StringRelatedField, SlugRelatedField
+from .models import Project, Contributor, Issue, Comment
 
 
-class ProjectsSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Projects
-        fields = ['id','author_user_id', 'author_user_id', 'title', 'description', 'type', ]
+        model = Project
+        fields = ['id', 'author_user_id', 'title', 'description', 'type', ]
 
 
-class ContributorsSerializer(serializers.ModelSerializer):
+class ContributorSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
+
     class Meta:
-        model = Contributors
-        fields = ['id', 'user', 'project_id', 'permission', 'body', 'role', ]
+        model = Contributor
+        fields = ['id', 'user_id', 'user', 'project_id', 'permission', 'role', ]
 
 
-class IssuesSerializer(serializers.ModelSerializer):
+class IssueSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Issues
+        model = Issue
         fields = ['id', 'project_id', 'title', 'description', 'tag', 'status', 'priority',
                   'author_user_id', 'assignee_user_id', 'created_time', ]
 
 
-class CommentsSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Comments
+        model = Comment
         fields = ['id', 'issue_id', 'author_user_id', 'description', 'created_time', ]
+
+
+class ProjectDetailsSerializer(serializers.ModelSerializer):
+    contributors = ContributorSerializer(many=True)
+
+    class Meta:
+        model = Project
+        fields = ['id', 'author_user_id', 'title', 'description', 'type', 'contributors', ]

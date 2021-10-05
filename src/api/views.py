@@ -15,6 +15,15 @@ class ProjectList(generics.ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(author_user_id=self.request.user)
+        Contributor.objects.create(
+            user=self.request.user,
+            project_id=serializer.instance,
+            permission=True,
+            role="administrateur projet",
+        )
+
 
 class ProjectDetails(
     generics.GenericAPIView,

@@ -5,6 +5,8 @@ from .models import Project, Contributor, Issue, Comment
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
+
     class Meta:
         model = Project
         fields = [
@@ -65,6 +67,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ProjectDetailsSerializer(serializers.ModelSerializer):
     contributors = ContributorSerializer(many=True)
+    author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
 
     class Meta:
         model = Project

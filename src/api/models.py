@@ -18,7 +18,6 @@ class Contributor(models.Model):
         to=Project, on_delete=models.CASCADE, related_name="contributors"
     )
     permission = models.BooleanField()
-    body = models.CharField(max_length=8192, blank=True)
     role = models.CharField(max_length=120)
 
 

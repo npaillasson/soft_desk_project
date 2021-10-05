@@ -34,6 +34,7 @@ class ProjectDetails(
     permission_classes = [IsAuthenticated]
     queryset = Project.objects.all()
     serializer_class = ProjectDetailsSerializer
+    lookup_url_kwarg = "project_id"
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -48,9 +49,12 @@ class ProjectDetails(
 class ProjectUsers(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ContributorSerializer
+    lookup_url_kwarg = ["project_id", "user_id"]
 
     def get_queryset(self):
         project = self.kwargs["project_id"]
+        print(self.__dict__)
+        print(self.lookup_field)
         return Contributor.objects.filter(project_id=project)
 
     def perform_create(self, serializer):

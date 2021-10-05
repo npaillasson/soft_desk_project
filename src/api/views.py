@@ -47,11 +47,13 @@ class ProjectDetails(
 
 class ProjectUsers(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = Contributor.objects.all()
     serializer_class = ContributorSerializer
 
+    def get_queryset(self):
+        project = self.kwargs["project_id"]
+        return Contributor.objects.filter(project_id=project)
+
     def perform_create(self, serializer):
-        project = self.kwargs["pk"]
+        project = self.kwargs["project_id"]
         project = Project.objects.get(id=project)
         serializer.save(project_id=project)
-        print(serializer.data)

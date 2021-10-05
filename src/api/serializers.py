@@ -20,6 +20,7 @@ class ContributorSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(
         queryset=User.objects.all(), slug_field="username"
     )
+    project_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
 
     class Meta:
         model = Contributor

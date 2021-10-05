@@ -36,7 +36,13 @@ class ProjectDetails(
         return self.destroy(request, *args, **kwargs)
 
 
-# class ProjectUsers(generics.ListCreateAPIView):
-#    permission_classes = ([IsAuthenticated])
-#    queryset = Projects.objects.all()
-#    serializer_class =
+class ProjectUsers(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
+
+    def perform_create(self, serializer):
+        project = self.kwargs["pk"]
+        project = Project.objects.get(id=project)
+        serializer.save(project_id=project)
+        print(serializer.data)

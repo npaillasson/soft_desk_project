@@ -5,7 +5,22 @@ urlpatterns = [
     path("projects/", ProjectList.as_view(), name="Projects_list"),
     path("projects/<int:project_id>/", ProjectDetails.as_view(), name="Projects_list"),
     path(
-        "projects/<int:project_id>/users/", ProjectUsers.as_view(), name="project_users"
+        "projects/<int:project_id>/users/",
+        ProjectUsers.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project_users",
     ),
-    #    path("projects/<int:project_id>/users/<int:user_id>),
+    path(
+        "projects/<int:project_id>/users/<int:pk>/",
+        ProjectUsers.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="delete_project_users",
+    ),
 ]

@@ -1,4 +1,7 @@
-from rest_framework import mixins, generics
+from rest_framework import mixins, generics, viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from .models import Comment, Contributor, Issue, Project
 from .serializers import (
@@ -8,6 +11,10 @@ from .serializers import (
     ProjectSerializer,
     ProjectDetailsSerializer,
 )
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    pass
 
 
 class ProjectList(generics.ListCreateAPIView):
@@ -46,18 +53,24 @@ class ProjectDetails(
         return self.destroy(request, *args, **kwargs)
 
 
-class ProjectUsers(generics.ListCreateAPIView):
+class ProjectUsers(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ContributorSerializer
-    lookup_url_kwarg = ["project_id", "user_id"]
+    lookup_url_kwarg = "project_id"
 
     def get_queryset(self):
-        project = self.kwargs["project_id"]
         print(self.__dict__)
-        print(self.lookup_field)
+        project = self.kwargs["project_id"]
         return Contributor.objects.filter(project_id=project)
 
     def perform_create(self, serializer):
         project = self.kwargs["project_id"]
         project = Project.objects.get(id=project)
         serializer.save(project_id=project)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = Contributor.objects.filter(
+            project_id=self.kwargs["project_id"], id=self.kwargs["pk"]
+        )
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

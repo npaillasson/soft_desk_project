@@ -5,7 +5,9 @@ from django.db import models
 class Project(models.Model):
 
     author_user_id = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="author_username",
     )
     title = models.CharField(max_length=240)
     description = models.CharField(max_length=1000)

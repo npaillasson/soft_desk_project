@@ -6,12 +6,17 @@ from .models import Project, Contributor, Issue, Comment
 
 class ProjectSerializer(serializers.ModelSerializer):
     author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
+    author_username = serializers.SerializerMethodField()
+
+    def get_author_username(self, obj):
+        return str(obj.author_user_id)
 
     class Meta:
         model = Project
         fields = [
             "id",
             "author_user_id",
+            "author_username",
             "title",
             "description",
             "type",
@@ -68,12 +73,17 @@ class CommentSerializer(serializers.ModelSerializer):
 class ProjectDetailsSerializer(serializers.ModelSerializer):
     contributors = ContributorSerializer(many=True)
     author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
+    author_username = serializers.SerializerMethodField()
+
+    def get_author_username(self, obj):
+        return str(obj.author_user_id)
 
     class Meta:
         model = Project
         fields = [
             "id",
             "author_user_id",
+            "author_username",
             "title",
             "description",
             "type",

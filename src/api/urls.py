@@ -1,5 +1,7 @@
 from django.urls import path
+from rest_framework import routers
 from .views import ProjectList, ProjectDetails, ProjectUsers
+
 
 urlpatterns = [
     path("projects/", ProjectList.as_view(), name="Projects_list"),

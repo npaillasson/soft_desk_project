@@ -42,6 +42,15 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
+    author_username = serializers.SerializerMethodField()
+    assignee_username = serializers.SerializerMethodField()
+
+    def get_author_username(self, obj):
+        return str(obj.author_user_id)
+
+    def get_assignee_username(self, obj):
+        return str(obj.assignee_user_id)
+
     class Meta:
         model = Issue
         fields = [
@@ -53,7 +62,9 @@ class IssueSerializer(serializers.ModelSerializer):
             "status",
             "priority",
             "author_user_id",
+            "author_username",
             "assignee_user_id",
+            "assignee_username",
             "created_time",
         ]
 
@@ -72,6 +83,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ProjectDetailsSerializer(serializers.ModelSerializer):
     contributors = ContributorSerializer(many=True)
+    issues = IssueSerializer(many=True)
     author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
 
@@ -88,4 +100,5 @@ class ProjectDetailsSerializer(serializers.ModelSerializer):
             "description",
             "type",
             "contributors",
+            "issues",
         ]

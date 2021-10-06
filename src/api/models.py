@@ -24,7 +24,9 @@ class Contributor(models.Model):
 
 
 class Issue(models.Model):
-    project_id = models.ForeignKey(to=Project, on_delete=models.CASCADE)
+    project_id = models.ForeignKey(
+        to=Project, on_delete=models.CASCADE, related_name="issues"
+    )
     title = models.CharField(max_length=240)
     description = models.CharField(max_length=1000)
     tag = models.CharField(max_length=120)
@@ -33,7 +35,7 @@ class Issue(models.Model):
     author_user_id = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="auther_user",
+        related_name="author_user",
     )
     assignee_user_id = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,

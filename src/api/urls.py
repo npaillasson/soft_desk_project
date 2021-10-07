@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework import routers
-from .views import ProjectList, ProjectDetails, ProjectUsers
+from .views import ProjectList, ProjectDetails, ProjectUsers, ProjectIssues
 
 
 urlpatterns = [
@@ -24,5 +24,14 @@ urlpatterns = [
             }
         ),
         name="delete_project_users",
+    ),
+    path(
+        "projects/<int:project_id>/issues/",
+        ProjectIssues.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
     ),
 ]

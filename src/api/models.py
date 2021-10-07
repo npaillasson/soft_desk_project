@@ -33,12 +33,12 @@ class Issue(models.Model):
     status = models.CharField(max_length=120)
     priority = models.CharField(max_length=120)
     author_user_id = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
+        to=Contributor,
         on_delete=models.CASCADE,
         related_name="author_user",
     )
     assignee_user_id = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
+        to=Contributor,
         on_delete=models.CASCADE,
         related_name="assignee_user",
     )

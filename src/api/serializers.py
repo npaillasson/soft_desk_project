@@ -42,6 +42,7 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
+    project_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
     assignee_username = serializers.SerializerMethodField()
 

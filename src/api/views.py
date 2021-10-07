@@ -13,10 +13,6 @@ from .serializers import (
 )
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
-    pass
-
-
 class ProjectList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Project.objects.all()
@@ -74,3 +70,24 @@ class ProjectUsers(viewsets.ModelViewSet):
         )
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectIssues(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = IssueSerializer
+    lookup_url_kwarg = "project_id"
+
+    def perform_create(self, serializer):
+        print("haha", serializer.validated_data)
+        project = self.kwargs["project_id"]
+        project = Project.objects.get(id=project)
+        print(project)
+
+        serializer.save(
+            project_id=project,
+        )
+
+    def get_queryset(self):
+        print(self.__dict__)
+        project = self.kwargs["project_id"]
+        return Issue.objects.filter(project_id=project)

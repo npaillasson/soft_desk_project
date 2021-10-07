@@ -22,6 +22,9 @@ class Contributor(models.Model):
     permission = models.BooleanField()
     role = models.CharField(max_length=120)
 
+    def __str__(self):
+        return str(self.user)
+
 
 class Issue(models.Model):
     project_id = models.ForeignKey(

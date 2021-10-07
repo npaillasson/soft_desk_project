@@ -55,13 +55,10 @@ class ProjectUsers(viewsets.ModelViewSet):
     lookup_url_kwarg = "project_id"
 
     def get_queryset(self):
-        print(self.__dict__)
-        project = self.kwargs["project_id"]
-        return Contributor.objects.filter(project_id=project)
+        return Contributor.objects.filter(project_id=self.kwargs["project_id"])
 
     def perform_create(self, serializer):
-        project = self.kwargs["project_id"]
-        project = Project.objects.get(id=project)
+        project = Project.objects.get(id=self.kwargs["project_id"])
         serializer.save(project_id=project)
 
     def destroy(self, request, *args, **kwargs):
@@ -78,16 +75,15 @@ class ProjectIssues(viewsets.ModelViewSet):
     lookup_url_kwarg = "project_id"
 
     def perform_create(self, serializer):
-        print("haha", serializer.validated_data)
-        project = self.kwargs["project_id"]
-        project = Project.objects.get(id=project)
-        print(project)
+        project = Project.objects.get(self.kwargs["project_id"])
 
         serializer.save(
             project_id=project,
         )
 
     def get_queryset(self):
-        print(self.__dict__)
-        project = self.kwargs["project_id"]
-        return Issue.objects.filter(project_id=project)
+        return Issue.objects.filter(project_id=self.kwargs["project_id"])
+
+
+class ProjectComments(viewsets.ModelViewSet):
+    pass

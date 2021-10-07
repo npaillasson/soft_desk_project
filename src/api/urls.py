@@ -34,4 +34,12 @@ urlpatterns = [
             }
         ),
     ),
+    path(
+        "projects/<int:project_id>/issues/<int:pk>/comments/",
+        ProjectIssues.as_view(
+            {
+                "put": "update",
+            }
+        ),
+    ),
 ]

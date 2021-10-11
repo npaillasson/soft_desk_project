@@ -2,7 +2,7 @@ from rest_framework import mixins, generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from .models import Comment, Contributor, Issue, Project
 from .serializers import (
     CommentSerializer,
@@ -52,7 +52,6 @@ class ProjectDetails(
 class ProjectUsers(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ContributorSerializer
-    lookup_url_kwarg = "project_id"
 
     def get_queryset(self):
         return Contributor.objects.filter(project_id=self.kwargs["project_id"])
@@ -72,14 +71,10 @@ class ProjectUsers(viewsets.ModelViewSet):
 class ProjectIssues(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = IssueSerializer
-    lookup_url_kwarg = "project_id"
 
     def perform_create(self, serializer):
         project = Project.objects.get(self.kwargs["project_id"])
-
-        serializer.save(
-            project_id=project,
-        )
+        serializer.save(project_id=project)
 
     def get_queryset(self):
         return Issue.objects.filter(project_id=self.kwargs["project_id"])

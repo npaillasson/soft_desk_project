@@ -27,14 +27,16 @@ class Contributor(models.Model):
 
 
 class Issue(models.Model):
+    PRIORITY_CHOICES = [(4, "Critique"), (3, "Fort"), (2, "Moyen"), (1, "Faible")]
+    STATUS_CHOICES = [(1, "En cours"), (2, "En test"), (3, "Validé")]
     project_id = models.ForeignKey(
         to=Project, on_delete=models.CASCADE, related_name="issues"
     )
     title = models.CharField(max_length=240)
     description = models.CharField(max_length=1000)
     tag = models.CharField(max_length=120)
-    status = models.CharField(max_length=120)
-    priority = models.CharField(max_length=120)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=1)
+    priority = models.CharField(choices=PRIORITY_CHOICES, max_length=1)
     author_user_id = models.ForeignKey(
         to=Contributor,
         on_delete=models.CASCADE,

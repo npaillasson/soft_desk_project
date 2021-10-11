@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from .models import Comment, Contributor, Issue, Project
+from .permissions import IsContributor
 from .serializers import (
     CommentSerializer,
     ContributorSerializer,
@@ -14,9 +15,15 @@ from .serializers import (
 
 
 class ProjectList(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = Project.objects.all()
+    permission_classes = [IsAuthenticated, IsContributor]
     serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        projects_user_list = Contributor.objects.filter(user=self.request.user)
+        project_list = []
+        for stuf in projects_user_list:
+            project_list.append(stuf.project_id)
+        return project_list
 
     def perform_create(self, serializer):
         serializer.save(author_user_id=self.request.user)

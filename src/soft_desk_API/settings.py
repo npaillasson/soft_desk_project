@@ -163,3 +163,5 @@ SIMPLE_JWT = {
 }
 
 APPEND_SLASH = True
+
+AUTH_USER_MODEL = "accounts.User"

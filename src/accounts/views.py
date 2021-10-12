@@ -1,9 +1,8 @@
-from rest_framework import mixins, generics
+from rest_framework import generics
 from .serializers import UserSerializer
-from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny
 
 
 class UserCreate(generics.CreateAPIView):
-    queryset = User.objects.all()
+    permission_classes = [AllowAny]
     serializer_class = UserSerializer
-

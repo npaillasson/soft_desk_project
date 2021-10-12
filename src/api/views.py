@@ -5,6 +5,7 @@ from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from .models import Comment, Contributor, Issue, Project
 from .permissions import IsContributor
+from accounts.models import User
 from .serializers import (
     CommentSerializer,
     ContributorSerializer,

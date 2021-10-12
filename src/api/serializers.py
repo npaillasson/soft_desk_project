@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from accounts.models import User
 from rest_framework.relations import StringRelatedField, SlugRelatedField
 from .models import Project, Contributor, Issue, Comment
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+
     author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
 

@@ -32,7 +32,6 @@ class ContributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributor
         fields = [
-            "id",
             "user_id",
             "user",
             "project_id",

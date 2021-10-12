@@ -15,7 +15,7 @@ from .serializers import (
 
 
 class ProjectList(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated, IsContributor]
+    permission_classes = [IsAuthenticated]
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
@@ -41,7 +41,7 @@ class ProjectDetails(
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
 ):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsContributor]
     queryset = Project.objects.all()
     serializer_class = ProjectDetailsSerializer
     lookup_url_kwarg = "project_id"
@@ -57,7 +57,7 @@ class ProjectDetails(
 
 
 class ProjectUsers(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsContributor]
     serializer_class = ContributorSerializer
 
     def get_queryset(self):
@@ -76,7 +76,7 @@ class ProjectUsers(viewsets.ModelViewSet):
 
 
 class ProjectIssues(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsContributor]
     serializer_class = IssueSerializer
 
     def perform_create(self, serializer):

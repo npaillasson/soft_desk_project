@@ -4,16 +4,24 @@ from rest_framework.relations import StringRelatedField, SlugRelatedField
 from .models import Project, Contributor, Issue, Comment
 
 
+class ChoiceField(serializers.ChoiceField):
+    def to_representation(self, obj):
+        return self._choices[int(obj)]
+
+
 class ProjectSerializer(serializers.ModelSerializer):
 
     author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
+    type = ChoiceField(Project.TYPE_CHOICES)
 
     def get_author_username(self, obj):
+        print(self)
         return str(obj.author_user_id)
 
     class Meta:
         model = Project
+
         fields = [
             "id",
             "author_user_id",
@@ -45,6 +53,8 @@ class IssueSerializer(serializers.ModelSerializer):
     project_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
     assignee_username = serializers.SerializerMethodField()
+    status = ChoiceField(choices=Issue.STATUS_CHOICES)
+    priority = ChoiceField(choices=Issue.PRIORITY_CHOICES)
 
     def get_author_username(self, obj):
         return str(obj.author_user_id)
@@ -87,6 +97,7 @@ class ProjectDetailsSerializer(serializers.ModelSerializer):
     issues = IssueSerializer(many=True)
     author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
+    type = ChoiceField(choices=Project.TYPE_CHOICES)
 
     def get_author_username(self, obj):
         return str(obj.author_user_id)

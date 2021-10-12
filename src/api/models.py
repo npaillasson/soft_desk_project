@@ -4,10 +4,11 @@ from accounts.models import User
 
 
 class Project(models.Model):
+
     TYPE_CHOICES = [
-        ("1", "Site Web"),
-        ("2", "Application Android"),
-        ("3", "Application IOS"),
+        (1, "Site Web"),
+        (2, "Application Android"),
+        (3, "Application IOS"),
     ]
 
     author_user_id = models.ForeignKey(
@@ -33,8 +34,20 @@ class Contributor(models.Model):
 
 
 class Issue(models.Model):
-    PRIORITY_CHOICES = [(4, "Critique"), (3, "Fort"), (2, "Moyen"), (1, "Faible")]
-    STATUS_CHOICES = [(1, "En cours"), (2, "En test"), (3, "Validé")]
+
+    PRIORITY_CHOICES = [
+        (4, "Critique"),
+        (3, "Fort"),
+        (2, "Moyen"),
+        (1, "Faible"),
+    ]
+
+    STATUS_CHOICES = [
+        (1, "En cours"),
+        (2, "En test"),
+        (3, "Validé"),
+    ]
+
     project_id = models.ForeignKey(
         to=Project, on_delete=models.CASCADE, related_name="issues"
     )

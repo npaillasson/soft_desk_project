@@ -115,3 +115,39 @@ class ProjectDetailsSerializer(serializers.ModelSerializer):
             "contributors",
             "issues",
         ]
+
+
+class ContributorDetailsSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field="username"
+    )
+    user_first_name = serializers.SerializerMethodField()
+    user_last_name = serializers.SerializerMethodField()
+    user_email = serializers.SerializerMethodField()
+    project_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
+    permission = serializers.BooleanField(required=True)
+
+    def get_user_object(self):
+        return User.objects.get(id=self.instance.user_id)
+
+    def get_user_first_name(self, obj):
+        return self.get_user_object().first_name
+
+    def get_user_last_name(self, obj):
+        return self.get_user_object().last_name
+
+    def get_user_email(self, obj):
+        return self.get_user_object().email
+
+    class Meta:
+        model = Contributor
+        fields = [
+            "user_id",
+            "user",
+            "user_first_name",
+            "user_last_name",
+            "user_email",
+            "project_id",
+            "permission",
+            "role",
+        ]

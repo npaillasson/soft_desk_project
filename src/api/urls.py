@@ -20,6 +20,7 @@ urlpatterns = [
         "projects/<int:project_id>/users/<int:pk>/",
         ProjectUsers.as_view(
             {
+                "get": "retrieve",
                 "delete": "destroy",
             }
         ),

@@ -33,6 +33,7 @@ class Contributor(models.Model):
         return str(self.user)
 
     class Meta:
+        ordering = ["-permission"]
         unique_together = ("user", "project_id")
 
 

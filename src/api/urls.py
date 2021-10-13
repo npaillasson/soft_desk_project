@@ -36,11 +36,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "projects/<int:project_id>/issues/<int:pk>/comments/",
-        ProjectIssues.as_view(
-            {
-                "put": "update",
-            }
-        ),
+        "projects/<int:project_id>/issues/<int:issue_id>/",
+        ProjectIssues.as_view({"get": "retrieve"}),
     ),
 ]

@@ -13,6 +13,7 @@ from .serializers import (
     ProjectSerializer,
     ProjectDetailsSerializer,
     ContributorDetailsSerializer,
+    IssueDetailsSerializer,
 )
 
 
@@ -92,6 +93,13 @@ class ProjectIssues(viewsets.ModelViewSet):
         project = Project.objects.get(id=self.kwargs["project_id"])
         author_user = self.request.user
         serializer.save(project_id=project, author_user=author_user)
+
+    def retrieve(self, request, *args, **kwargs):
+        issue = Issue.objects.get(
+            project_id=self.kwargs["project_id"], id=self.kwargs["issue_id"]
+        )
+        serializer = IssueDetailsSerializer(issue)
+        return Response(serializer.data)
 
     def get_queryset(self):
         return Issue.objects.filter(project_id=self.kwargs["project_id"])

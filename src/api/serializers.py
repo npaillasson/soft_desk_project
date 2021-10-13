@@ -11,7 +11,6 @@ class ChoiceField(serializers.ChoiceField):
 
 class ProjectSerializer(serializers.ModelSerializer):
 
-    author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
     type = ChoiceField(Project.TYPE_CHOICES)
 
@@ -95,7 +94,6 @@ class CommentSerializer(serializers.ModelSerializer):
 class ProjectDetailsSerializer(serializers.ModelSerializer):
     contributors = ContributorSerializer(many=True)
     issues = IssueSerializer(many=True)
-    author_user_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_username = serializers.SerializerMethodField()
     type = ChoiceField(choices=Project.TYPE_CHOICES)
 

@@ -11,7 +11,7 @@ class Project(models.Model):
         (3, "Application IOS"),
     ]
 
-    author_user_id = models.ForeignKey(
+    author_user = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE,
         related_name="author_username",
@@ -56,12 +56,12 @@ class Issue(models.Model):
     tag = models.CharField(max_length=120)
     status = models.CharField(choices=STATUS_CHOICES, max_length=1)
     priority = models.CharField(choices=PRIORITY_CHOICES, max_length=1)
-    author_user_id = models.ForeignKey(
+    author_user = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE,
         related_name="author_user",
     )
-    assignee_user_id = models.ForeignKey(
+    assignee_user = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE,
         related_name="assignee_user",
@@ -71,6 +71,6 @@ class Issue(models.Model):
 
 class Comment(models.Model):
     issue_id = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
-    author_user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    author_user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     description = models.CharField(max_length=1000)
     created_time = models.DateTimeField(auto_now_add=True)

@@ -1,10 +1,14 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
 from .models import Project
 
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        #  return
+        if request.method in SAFE_METHODS:
+            print("OBJ", obj.__dict__)
+            return True
+        print(obj.__dict__)
         return True
 
 

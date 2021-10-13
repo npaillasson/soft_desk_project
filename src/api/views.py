@@ -2,9 +2,9 @@ from rest_framework import mixins, generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
+from rest_framework.permissions import IsAuthenticated
 from .models import Comment, Contributor, Issue, Project
-from .permissions import IsContributor
+from .permissions import IsContributor, IsOwner
 from accounts.models import User
 from .serializers import (
     CommentSerializer,
@@ -22,8 +22,8 @@ class ProjectList(generics.ListCreateAPIView):
     def get_queryset(self):
         projects_user_list = Contributor.objects.filter(user=self.request.user)
         project_list = []
-        for stuf in projects_user_list:
-            project_list.append(stuf.project_id)
+        for project in projects_user_list:
+            project_list.append(project.project_id)
         return project_list
 
     def perform_create(self, serializer):
@@ -42,7 +42,7 @@ class ProjectDetails(
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
 ):
-    permission_classes = [IsAuthenticated, IsContributor]
+    permission_classes = [IsAuthenticated, IsContributor, IsOwner]
     queryset = Project.objects.all()
     serializer_class = ProjectDetailsSerializer
     lookup_url_kwarg = "project_id"

@@ -51,15 +51,17 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 class IssueSerializer(serializers.ModelSerializer):
     project_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
-    author_username = serializers.SerializerMethodField()
-    assignee_username = serializers.SerializerMethodField()
+    author_user = serializers.SerializerMethodField()
+    assignee_user = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field="username"
+    )
     status = ChoiceField(choices=Issue.STATUS_CHOICES)
     priority = ChoiceField(choices=Issue.PRIORITY_CHOICES)
 
-    def get_author_username(self, obj):
-        return str(obj.author_user_id)
+    def get_author_user(self, obj):
+        return str(obj.author_user)
 
-    def get_assignee_username(self, obj):
+    def get_assignee_user(self, obj):
         return str(obj.assignee_user_id)
 
     class Meta:
@@ -73,9 +75,9 @@ class IssueSerializer(serializers.ModelSerializer):
             "status",
             "priority",
             "author_user_id",
-            "author_username",
+            "author_user",
             "assignee_user_id",
-            "assignee_username",
+            "assignee_user",
             "created_time",
         ]
 

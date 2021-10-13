@@ -72,6 +72,9 @@ class Issue(models.Model):
     )
     created_time = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["status", "-priority", "created_time"]
+
 
 class Comment(models.Model):
     issue_id = models.ForeignKey(to=Issue, on_delete=models.CASCADE)

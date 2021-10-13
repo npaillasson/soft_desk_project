@@ -32,6 +32,9 @@ class Contributor(models.Model):
     def __str__(self):
         return str(self.user)
 
+    class Meta:
+        unique_together = ("user", "project_id")
+
 
 class Issue(models.Model):
 

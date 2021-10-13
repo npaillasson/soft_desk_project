@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from .models import Comment, Contributor, Issue, Project
-from .permissions import IsContributor, IsOwner
+from .permissions import IsContributor, IsOwner, CanAddContributors
 from accounts.models import User
 from .serializers import (
     CommentSerializer,
@@ -58,7 +58,7 @@ class ProjectDetails(
 
 
 class ProjectUsers(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsContributor]
+    permission_classes = [IsAuthenticated, IsContributor, CanAddContributors]
     serializer_class = ContributorSerializer
 
     def get_queryset(self):
@@ -70,7 +70,7 @@ class ProjectUsers(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = Contributor.objects.filter(
-            project_id=self.kwargs["project_id"], id=self.kwargs["pk"]
+            project_id=self.kwargs["project_id"], user_id=self.kwargs["pk"]
         )
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

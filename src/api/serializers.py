@@ -36,6 +36,7 @@ class ContributorSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(), slug_field="username"
     )
     project_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
+    permission = serializers.BooleanField(required=True)
 
     class Meta:
         model = Contributor

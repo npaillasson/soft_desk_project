@@ -26,7 +26,6 @@ class CanAddContributors(permissions.BasePermission):
         contributor_user = request.user.contributor_set.get(
             project_id=request.parser_context["kwargs"]["project_id"], user=request.user
         )
-
         if request.method in SAFE_METHODS:
             return True
         elif request.method == "DELETE":
@@ -34,7 +33,9 @@ class CanAddContributors(permissions.BasePermission):
                 project_id=request.parser_context["kwargs"]["project_id"],
                 user_id=request.parser_context["kwargs"]["pk"],
             )
-            self.has_object_permission(request, view, obj, project, contributor_user)
+            return self.has_object_permission(
+                request, view, obj, project, contributor_user
+            )
         elif project.author_user == contributor_user:
             return True
         return request.user.contributor_set.get(
@@ -42,10 +43,12 @@ class CanAddContributors(permissions.BasePermission):
         ).permission
 
     def has_object_permission(self, request, view, obj, project, contributor_user):
-        if project.author_user == obj.user_id:
+        if project.author_user_id == obj.user_id:
             return False
-        elif project.author_user == contributor_user.user_id:
+        elif contributor_user.user_id == obj.user_id:
             return True
-        elif contributor_user.permission and obj.permission:
+        elif project.author_user_id == contributor_user.user_id:
+            return True
+        elif contributor_user.permission and not obj.permission:
             return True
         return False

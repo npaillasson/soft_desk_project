@@ -1,6 +1,12 @@
 from django.urls import path
 from rest_framework import routers
-from .views import ProjectList, ProjectDetails, ProjectUsers, ProjectIssues
+from .views import (
+    ProjectList,
+    ProjectDetails,
+    ProjectUsers,
+    ProjectIssues,
+    ProjectComments,
+)
 
 
 urlpatterns = [
@@ -37,6 +43,20 @@ urlpatterns = [
     ),
     path(
         "projects/<int:project_id>/issues/<int:issue_id>/",
-        ProjectIssues.as_view({"get": "retrieve"}),
+        ProjectIssues.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+    ),
+    path(
+        "projects/<int:project_id>/issues/<int:issue_id>/comments/",
+        ProjectComments.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
     ),
 ]

@@ -101,9 +101,27 @@ class ProjectIssues(viewsets.ModelViewSet):
         serializer = IssueDetailsSerializer(issue)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = Issue.objects.filter(
+            project_id=self.kwargs["project_id"], id=self.kwargs["issue_id"]
+        )
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def get_queryset(self):
         return Issue.objects.filter(project_id=self.kwargs["project_id"])
 
 
 class ProjectComments(viewsets.ModelViewSet):
-    pass
+    permission_classes = [IsAuthenticated, IsContributor]
+    serializer_class = CommentSerializer
+
+    def perform_create(self, serializer):
+        issue = Issue.objects.get(id=self.kwargs["issue_id"])
+        author_user = self.request.user
+        serializer.save(issue_id=issue, author_user=author_user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = Comment.objects.filter(issue_id=self.kwargs["issue_id"])
+        serializer = CommentSerializer(queryset, many=True)
+        return Response(serializer.data)

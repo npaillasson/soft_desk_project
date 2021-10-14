@@ -83,12 +83,19 @@ class IssueSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    author_user = serializers.SerializerMethodField()
+    issue_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
+
+    def get_author_user(self, obj):
+        return str(obj.author_user)
+
     class Meta:
         model = Comment
         fields = [
             "id",
             "issue_id",
             "author_user_id",
+            "author_user",
             "description",
             "created_time",
         ]
@@ -161,6 +168,7 @@ class IssueDetailsSerializer(serializers.ModelSerializer):
     )
     status = ChoiceField(choices=Issue.STATUS_CHOICES)
     priority = ChoiceField(choices=Issue.PRIORITY_CHOICES)
+    comments = CommentSerializer(many=True)
 
     def get_author_user(self, obj):
         return str(obj.author_user)
@@ -183,4 +191,5 @@ class IssueDetailsSerializer(serializers.ModelSerializer):
             "assignee_user_id",
             "assignee_user",
             "created_time",
+            "comments",
         ]

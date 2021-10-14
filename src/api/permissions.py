@@ -5,7 +5,7 @@ from .models import Project, Contributor
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
+        if request.method in SAFE_METHODS or request.method == "POST":
             return True
         return request.user == obj.author_user
 

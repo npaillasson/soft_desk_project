@@ -86,7 +86,7 @@ class ProjectUsers(viewsets.ModelViewSet):
 
 
 class ProjectIssues(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsContributor]
+    permission_classes = [IsAuthenticated, IsContributor, IsOwner]
     serializer_class = IssueSerializer
 
     def perform_create(self, serializer):
@@ -113,7 +113,7 @@ class ProjectIssues(viewsets.ModelViewSet):
 
 
 class ProjectComments(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsContributor]
+    permission_classes = [IsAuthenticated, IsContributor, IsOwner]
     serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
@@ -125,3 +125,19 @@ class ProjectComments(viewsets.ModelViewSet):
         queryset = Comment.objects.filter(issue_id=self.kwargs["issue_id"])
         serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        comment = Comment.objects.get(
+            issue_id=self.kwargs["issue_id"], id=self.kwargs["pk"]
+        )
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save(description=serializer.validated_data["description"])
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        return Comment.objects.filter(
+            issue_id=self.kwargs["issue_id"], id=self.kwargs["pk"]
+        )

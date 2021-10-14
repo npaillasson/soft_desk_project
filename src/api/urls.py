@@ -59,4 +59,14 @@ urlpatterns = [
             }
         ),
     ),
+    path(
+        "projects/<int:project_id>/issues/<int:issue_id>/comments/<int:pk>/",
+        ProjectComments.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "delete": "destroy",
+            }
+        ),
+    ),
 ]

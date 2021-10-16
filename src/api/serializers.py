@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from accounts.models import User
-from rest_framework.relations import StringRelatedField, SlugRelatedField
 from .models import Project, Contributor, Issue, Comment
 
 

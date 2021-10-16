@@ -1,13 +1,9 @@
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.exceptions import NotFound
 from rest_framework import mixins, generics, viewsets, status
-from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from .models import Comment, Contributor, Issue, Project
+from .functions import get_contributor, get_issue, get_comment, get_project
 from .permissions import IsContributor, IsOwner, CanAddContributors
-from accounts.models import User
 from .serializers import (
     CommentSerializer,
     ContributorSerializer,
@@ -69,21 +65,21 @@ class ProjectUsers(viewsets.ModelViewSet):
         return Contributor.objects.filter(project_id=self.kwargs["project_id"])
 
     def retrieve(self, request, *args, **kwargs):
-        contributors = Contributor.objects.get(
+        contributor = get_contributor(
             project_id=self.kwargs["project_id"], user_id=self.kwargs["pk"]
         )
-        serializer = ContributorDetailsSerializer(contributors)
+        serializer = ContributorDetailsSerializer(contributor)
         return Response(serializer.data)
 
     def perform_create(self, serializer):
-        project = Project.objects.get(id=self.kwargs["project_id"])
+        project = get_project(project_id=self.kwargs["project_id"])
         serializer.save(project_id=project)
 
     def destroy(self, request, *args, **kwargs):
-        instance = Contributor.objects.filter(
+        contributor = get_contributor(
             project_id=self.kwargs["project_id"], user_id=self.kwargs["pk"]
         )
-        self.perform_destroy(instance)
+        self.perform_destroy(contributor)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -92,22 +88,18 @@ class ProjectIssues(viewsets.ModelViewSet):
     serializer_class = IssueSerializer
 
     def perform_create(self, serializer):
-        project = Project.objects.get(id=self.kwargs["project_id"])
+        project = get_project(project_id=self.kwargs["project_id"])
         author_user = self.request.user
         serializer.save(project_id=project, author_user=author_user)
 
     def retrieve(self, request, *args, **kwargs):
-        issue = Issue.objects.get(
-            project_id=self.kwargs["project_id"], id=self.kwargs["issue_id"]
-        )
+        issue = get_issue(id=self.kwargs["issue_id"])
         serializer = IssueDetailsSerializer(issue)
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        instance = Issue.objects.filter(
-            project_id=self.kwargs["project_id"], id=self.kwargs["issue_id"]
-        )
-        self.perform_destroy(instance)
+        issue = get_issue(id=self.kwargs["issue_id"])
+        self.perform_destroy(issue)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_queryset(self):
@@ -119,7 +111,7 @@ class ProjectComments(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
-        issue = Issue.objects.get(id=self.kwargs["issue_id"])
+        issue = get_issue(id=self.kwargs["issue_id"])
         author_user = self.request.user
         serializer.save(issue_id=issue, author_user=author_user)
 
@@ -129,9 +121,7 @@ class ProjectComments(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        comment = Comment.objects.get(
-            issue_id=self.kwargs["issue_id"], id=self.kwargs["pk"]
-        )
+        comment = get_comment(id=self.kwargs["pk"])
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
 

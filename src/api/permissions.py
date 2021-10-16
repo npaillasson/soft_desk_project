@@ -1,8 +1,7 @@
 from rest_framework import permissions
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import SAFE_METHODS
-from .models import Project, Contributor
+from .functions import get_contributor, get_project
 
 
 class IsOwner(permissions.BasePermission):
@@ -14,12 +13,7 @@ class IsOwner(permissions.BasePermission):
 
 class IsContributor(permissions.BasePermission):
     def has_permission(self, request, view):
-        try:
-            project = Project.objects.get(
-                id=request.parser_context["kwargs"]["project_id"]
-            )
-        except ObjectDoesNotExist:
-            raise NotFound()
+        project = get_project(project_id=request.parser_context["kwargs"]["project_id"])
         contributors_list = project.contributors.all()
         for contributor in contributors_list:
             if contributor.user == request.user:
@@ -29,14 +23,14 @@ class IsContributor(permissions.BasePermission):
 
 class CanAddContributors(permissions.BasePermission):
     def has_permission(self, request, view):
-        project = Project.objects.get(id=request.parser_context["kwargs"]["project_id"])
+        project = get_project(project_id=request.parser_context["kwargs"]["project_id"])
         contributor_user = request.user.contributor_set.get(
             project_id=request.parser_context["kwargs"]["project_id"], user=request.user
         )
         if request.method in SAFE_METHODS:
             return True
         elif request.method == "DELETE":
-            obj = Contributor.objects.get(
+            obj = get_contributor(
                 project_id=request.parser_context["kwargs"]["project_id"],
                 user_id=request.parser_context["kwargs"]["pk"],
             )

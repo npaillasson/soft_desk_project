@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+from rest_framework.exceptions import ValidationError
 from rest_framework import mixins, generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -79,7 +81,15 @@ class ProjectUsers(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         project = get_project(project_id=self.kwargs["project_id"])
-        serializer.save(project_id=project)
+        try:
+            serializer.save(project_id=project)
+        except IntegrityError:
+            raise ValidationError(
+                detail={
+                    "message": "Impossible d'enregistrer le même utilisateur"
+                    " deux fois en tant que contributeur du projet"
+                }
+            )
 
     def destroy(self, request, *args, **kwargs):
         contributor = get_contributor(

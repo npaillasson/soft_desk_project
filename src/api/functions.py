@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import NotFound
+from accounts.models import User
 from .models import Comment, Contributor, Issue, Project
 
 
@@ -17,6 +18,11 @@ def get_contributor(project_id, user_id):
     except ObjectDoesNotExist:
         raise NotFound()
     return contributor
+
+
+def get_contributor_by_username(project_id, username):
+    user = User.objects.get(username=username)
+    get_contributor(project_id=project_id, user_id=user.id)
 
 
 def get_issue(id):

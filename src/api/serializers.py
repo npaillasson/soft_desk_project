@@ -15,7 +15,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def get_author_username(self, obj):
         print(self)
-        return str(obj.author_user_id)
+        return str(obj.author_user)
 
     class Meta:
         model = Project
@@ -101,13 +101,13 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailsSerializer(serializers.ModelSerializer):
-    contributors = ContributorSerializer(many=True)
-    issues = IssueSerializer(many=True)
+    contributors = ContributorSerializer(read_only=True, many=True)
+    issues = IssueSerializer(read_only=True, many=True)
     author_username = serializers.SerializerMethodField()
     type = ChoiceField(choices=Project.TYPE_CHOICES)
 
     def get_author_username(self, obj):
-        return str(obj.author_user_id)
+        return str(obj.author_user)
 
     class Meta:
         model = Project

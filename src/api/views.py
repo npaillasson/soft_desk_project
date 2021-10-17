@@ -2,7 +2,13 @@ from rest_framework import mixins, generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Comment, Contributor, Issue, Project
-from .functions import get_contributor, get_issue, get_comment, get_project
+from .functions import (
+    get_contributor,
+    get_issue,
+    get_comment,
+    get_project,
+    get_contributor_by_username,
+)
 from .permissions import IsContributor, IsOwner, CanAddContributors
 from .serializers import (
     CommentSerializer,
@@ -27,7 +33,7 @@ class ProjectList(generics.ListCreateAPIView):
         return project_list
 
     def perform_create(self, serializer):
-        serializer.save(author_user_id=self.request.user)
+        serializer.save(author_user=self.request.user)
         Contributor.objects.create(
             user=self.request.user,
             project_id=serializer.instance,
@@ -89,6 +95,10 @@ class ProjectIssues(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         project = get_project(project_id=self.kwargs["project_id"])
+        contributor = get_contributor_by_username(
+            project_id=project.id,
+            username=serializer.validated_data["assignee_user"],
+        )
         author_user = self.request.user
         serializer.save(project_id=project, author_user=author_user)
 

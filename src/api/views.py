@@ -156,6 +156,8 @@ class ProjectComments(viewsets.ModelViewSet):
         serializer.save(issue_id=issue, author_user=author_user)
 
     def list(self, request, *args, **kwargs):
+        project = get_project(project_id=self.kwargs["project_id"])
+        get_issue(project_id=project, id=self.kwargs["issue_id"])
         queryset = Comment.objects.filter(issue_id=self.kwargs["issue_id"])
         serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data)

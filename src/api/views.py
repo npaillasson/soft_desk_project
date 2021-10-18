@@ -112,6 +112,13 @@ class ProjectIssues(viewsets.ModelViewSet):
         author_user = self.request.user
         serializer.save(project_id=project, author_user=author_user)
 
+    def update(self, request, *args, **kwargs):
+        issue = get_issue(id=self.kwargs["issue_id"])
+        serializer = IssueSerializer(issue, request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
     def retrieve(self, request, *args, **kwargs):
         issue = get_issue(id=self.kwargs["issue_id"])
         serializer = IssueDetailsSerializer(issue)

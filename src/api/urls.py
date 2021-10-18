@@ -46,6 +46,7 @@ urlpatterns = [
         "projects/<int:project_id>/issues/<int:issue_id>/",
         ProjectIssues.as_view(
             {
+                "put": "update",
                 "get": "retrieve",
                 "delete": "destroy",
             }

@@ -122,11 +122,11 @@ class ProjectIssues(viewsets.ModelViewSet):
         project = get_project(project_id=self.kwargs["project_id"])
         issue = self.get_object()
         serializer = IssueSerializer(issue, request.data)
+        serializer.is_valid(raise_exception=True)
         get_contributor_by_username(
             project_id=project.id,
             username=request.data["assignee_user"],
         )
-        serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
 

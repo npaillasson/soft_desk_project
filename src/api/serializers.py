@@ -52,7 +52,7 @@ class IssueSerializer(serializers.ModelSerializer):
     project_id = serializers.SlugRelatedField(read_only=True, slug_field="id")
     author_user = serializers.SerializerMethodField()
     assignee_user = serializers.SlugRelatedField(
-        queryset=User.objects.all(), slug_field="username"
+        queryset=User.objects.all(), slug_field="username",
     )
     status = ChoiceField(choices=Issue.STATUS_CHOICES)
     priority = ChoiceField(choices=Issue.PRIORITY_CHOICES)

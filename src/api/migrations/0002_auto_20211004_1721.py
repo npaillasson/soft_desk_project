@@ -8,24 +8,24 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('api', '0001_initial'),
+        ("api", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Comments',
-            new_name='Comment',
+            old_name="Comments",
+            new_name="Comment",
         ),
         migrations.RenameModel(
-            old_name='Contributors',
-            new_name='Contributor',
+            old_name="Contributors",
+            new_name="Contributor",
         ),
         migrations.RenameModel(
-            old_name='Issues',
-            new_name='Issue',
+            old_name="Issues",
+            new_name="Issue",
         ),
         migrations.RenameModel(
-            old_name='Projects',
-            new_name='Project',
+            old_name="Projects",
+            new_name="Project",
         ),
     ]

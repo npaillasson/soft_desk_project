@@ -103,9 +103,15 @@ class ProjectIssues(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsContributor, IsOwner]
     serializer_class = IssueSerializer
 
+    def get_object(self):
+        project = get_project(project_id=self.kwargs["project_id"])
+        obj = get_issue(project_id=project, id=self.kwargs["issue_id"])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
     def perform_create(self, serializer):
         project = get_project(project_id=self.kwargs["project_id"])
-        contributor = get_contributor_by_username(
+        get_contributor_by_username(
             project_id=project.id,
             username=serializer.validated_data["assignee_user"],
         )
@@ -113,19 +119,25 @@ class ProjectIssues(viewsets.ModelViewSet):
         serializer.save(project_id=project, author_user=author_user)
 
     def update(self, request, *args, **kwargs):
-        issue = get_issue(id=self.kwargs["issue_id"])
+        project = get_project(project_id=self.kwargs["project_id"])
+        issue = self.get_object()
         serializer = IssueSerializer(issue, request.data)
+        get_contributor_by_username(
+            project_id=project.id,
+            username=request.data["assignee_user"],
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        issue = get_issue(id=self.kwargs["issue_id"])
+        project = get_project(project_id=self.kwargs["project_id"])
+        issue = get_issue(project_id=project, id=self.kwargs["issue_id"])
         serializer = IssueDetailsSerializer(issue)
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        issue = get_issue(id=self.kwargs["issue_id"])
+        issue = self.get_object()
         self.perform_destroy(issue)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -138,7 +150,8 @@ class ProjectComments(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
-        issue = get_issue(id=self.kwargs["issue_id"])
+        project = get_project(project_id=self.kwargs["project_id"])
+        issue = get_issue(project_id=project, id=self.kwargs["issue_id"])
         author_user = self.request.user
         serializer.save(issue_id=issue, author_user=author_user)
 
@@ -148,7 +161,9 @@ class ProjectComments(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        comment = get_comment(id=self.kwargs["pk"])
+        project = get_project(project_id=self.kwargs["project_id"])
+        issue = get_issue(project_id=project, id=self.kwargs["issue_id"])
+        comment = get_comment(issue_id=issue, id=self.kwargs["pk"])
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
 

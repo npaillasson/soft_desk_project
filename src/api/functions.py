@@ -25,17 +25,17 @@ def get_contributor_by_username(project_id, username):
     get_contributor(project_id=project_id, user_id=user.id)
 
 
-def get_issue(id):
+def get_issue(project_id, id):
     try:
-        issue = Issue.objects.get(id=id)
+        issue = Issue.objects.get(project_id=project_id, id=id)
     except ObjectDoesNotExist:
         raise NotFound()
     return issue
 
 
-def get_comment(id):
+def get_comment(issue_id, id):
     try:
-        comment = Comment.objects.get(id=id)
+        comment = Comment.objects.get(issue_id=issue_id, id=id)
     except ObjectDoesNotExist:
         raise NotFound()
     return comment
